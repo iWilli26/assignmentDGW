@@ -1,17 +1,30 @@
-import axios from "axios";
+import { hashPassword, comparePasswords } from "../authUtils";
+import pool from "../../db";
 import { User } from "@/model/user";
 export async function POST(request: Request) {
-  const res: User = await request.json();
+    const userToCreate: User = await request.json();
+    const users = (await pool.query(`SELECT * FROM "assignmentDGW".users`))
+        .rows;
 
-  const test = await emailAlreadyUsed(res.email);
-
-  return test
-    ? Response.json({ error: "Email already used" })
-    : Response.json({ data: res });
-}
-
-async function emailAlreadyUsed(email: string) {
-  const users: User[] = await axios.get("/api/users").then((res) => res.data);
-
-  return users.some((user) => user.email === email);
+    const emailAlreadyUsed = users.find(
+        (user) => user.email === userToCreate.email
+    );
+    const usernameAlreadyUsed = users.find(
+        (user) => user.username === userToCreate.username
+    );
+    if (emailAlreadyUsed) {
+        return Response.json({
+            error: { field: "email", detail: "email already in use" },
+        });
+    } else if (usernameAlreadyUsed) {
+        return Response.json({
+            error: { field: "username", detail: "Username already taken" },
+        });
+    } else {
+        userToCreate.password = await hashPassword(userToCreate.password);
+        await pool.query(
+            `INSERT INTO "assignmentDGW".users (username, email, password, first_name, last_name) VALUES ('${userToCreate.username}','${userToCreate.email}', '${userToCreate.password}', '${userToCreate.firstName}', '${userToCreate.lastName}')`
+        );
+        return Response.json({ data: userToCreate });
+    }
 }
