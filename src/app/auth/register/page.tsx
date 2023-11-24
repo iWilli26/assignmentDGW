@@ -1,7 +1,5 @@
 "use client";
-import { User } from "@/model/user";
 import axios from "axios";
-import { get } from "http";
 import React, { use, useState } from "react";
 import styled from "@emotion/styled";
 

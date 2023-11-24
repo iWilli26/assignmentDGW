@@ -2,10 +2,8 @@ import axios from "axios";
 import { User } from "@/model/user";
 export async function POST(request: Request) {
   const res: User = await request.json();
-  console.log(res);
 
   const test = await emailAlreadyUsed(res.email);
-  console.log(test);
 
   return test
     ? Response.json({ error: "Email already used" })
