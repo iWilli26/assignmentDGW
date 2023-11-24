@@ -1,23 +1,12 @@
+import pool from "../db";
 export async function GET() {
-  return Response.json([
-    {
-      firstName: "John",
-      lastName: "Doe",
-      email: "test@test.fr",
-      password: "test",
-      username: "johndoe",
-    },
-    {
-      firstName: "Dohn",
-      lastName: "Joe",
-      email: "test2@test.fr",
-      password: "test2",
-      username: "dohnjoe",
-    },
-  ]);
+    const res = await pool.query(`SELECT * FROM "assignmentDGW".users`);
+    console.log(res.rows);
+
+    return Response.json(res.rows);
 }
 
 export async function POST(request: Request) {
-  const res = await request.json();
-  return Response.json({ data: res });
+    const res = await request.json();
+    return Response.json({ data: res });
 }
