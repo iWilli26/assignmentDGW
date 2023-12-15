@@ -26,8 +26,9 @@ export async function POST(request: Request) {
     } else {
         userToCreate.password = await hashPassword(userToCreate.password);
         await pool.query(
-            `INSERT INTO "assignmentDGW".users (username, email, password, first_name, last_name) VALUES ('${userToCreate.username}','${userToCreate.email}', '${userToCreate.password}', '${userToCreate.firstName}', '${userToCreate.lastName}')`
+            `INSERT INTO "assignmentDGW".users (username, email, password, "firstName", "lastName") VALUES ('${userToCreate.username}','${userToCreate.email}', '${userToCreate.password}', '${userToCreate.firstName}', '${userToCreate.lastName}')`
         );
+
         return Response.json({ data: userToCreate });
     }
 }

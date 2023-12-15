@@ -1,22 +1,23 @@
-import bcrypt from "bcrypt";
+import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { User } from "@/model/user";
 import { serialize } from "cookie";
 
 export const hashPassword = async (password: string): Promise<string> => {
     const saltRounds = 10; // Adjust the cost factor as needed
-    return await bcrypt.hash(password, saltRounds);
+    return await bcryptjs.hash(password, saltRounds);
 };
 
 export const comparePasswords = async (
     password: string,
     hashedPassword: string
 ): Promise<boolean> => {
-    return await bcrypt.compare(password, hashedPassword);
+    return await bcryptjs.compare(password, hashedPassword);
 };
 
 export const generateToken = async (user: User) => {
     const secret = (process.env.JWT_SECRET as string) || "secret";
+
     const token = jwt.sign(
         {
             id: user.id,
@@ -27,7 +28,7 @@ export const generateToken = async (user: User) => {
             iss: "assignmentDGW",
             iat: Date.now(),
         },
-        process.env.JWT_SECRET as string,
+        secret,
         {
             expiresIn: "1d",
         }
@@ -43,13 +44,17 @@ export const generateToken = async (user: User) => {
     return { token, serializedUser };
 };
 
-export const verifyToken = async (token: string) => {
+export const verifyToken = async (token: string | undefined) => {
     try {
-        const verifiedToken = await jwt.verify(
-            token,
-            process.env.JWT_SECRET as string
-        );
-        return verifiedToken;
+        if (token) {
+            const verifiedToken = await jwt.verify(
+                token,
+                process.env.JWT_SECRET as string
+            );
+            return verifiedToken;
+        } else {
+            return null;
+        }
     } catch (e) {
         return null;
     }

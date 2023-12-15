@@ -32,6 +32,8 @@ export async function POST(request: Request) {
             const response = {
                 username: user.username,
                 email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
                 id: user.id,
             };
             return new Response(JSON.stringify(response), {

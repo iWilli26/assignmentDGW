@@ -1,0 +1,44 @@
+version: "3"
+
+services:
+    postgres:
+        image: dgwback
+        container_name: postgres
+        ports:
+            - "5432:5432"
+        environment:
+            POSTGRES_DB: assignmentDGW
+            POSTGRES_USER: application
+            POSTGRES_PASSWORD: root
+        volumes:
+            - ./setupDB/bdd.sql:/docker-entrypoint-initdb.d/bdd.sql
+            - postgres_data:/var/lib/postgresql/data
+        networks:
+            - dgw
+    backend:
+        build:
+            context: ./setupDB # Path to the directory containing the Dockerfile
+        container_name: backend
+        ports:
+            - "5430:5432"
+        depends_on:
+            - postgres
+        networks:
+            - dgw
+
+    frontend:
+        build:
+            context: ./ # Path to the directory containing the Dockerfile
+        container_name: frontend
+        ports:
+            - "3000:3000"
+        depends_on:
+            - backend
+        networks:
+            - dgw
+
+networks:
+    dgw:
+
+volumes:
+    postgres_data:

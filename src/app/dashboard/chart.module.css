@@ -1,0 +1,32 @@
+/* .canvas {
+    height: 60vh;
+    width: 60vw;
+    position: relative;
+}
+
+@media (min-width: 768px) {
+    .canvas {
+        height: auto;
+        width: auto;
+        position: relative;
+    }
+} */
+
+.wrapper {
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+}
+.chart {
+    height: 60vh;
+    width: 100vw;
+    position: relative;
+}
+
+@media (min-width: 768px) {
+    .chart {
+        height: auto;
+        width: auto;
+    }
+}

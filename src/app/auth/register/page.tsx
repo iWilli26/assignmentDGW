@@ -44,7 +44,6 @@ const RegisterForm: React.FC = () => {
 
     const onSubmit = async (data: any) => {
         const register = await axios.post("/api/auth/register", data);
-        console.log(register.data);
         if (!register.data.error) {
             await login(data);
             window.location.href = "/";

@@ -1,70 +1,27 @@
-"use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
-import { Container } from "@mui/material";
+import { Container, Grid } from "@mui/material";
 import Link from "@mui/material/Link";
 import { useRouter } from "next/navigation";
-import {
-    CssBaseline,
-    Box,
-    Avatar,
-    Typography,
-    Grid,
-    TextField,
-    Button,
-    createTheme,
-} from "@mui/material";
+import * as d3 from "d3";
+import fetchCsv from "./fetchCsv";
+import { CssBaseline } from "@mui/material";
 import axios from "axios";
-import { Pokemon } from "@/model/pokemon";
+import fetchData from "./fetchCsv";
+import { getUser } from "../auth/authUtils";
+import { BarChart } from "./chart";
+import Controller from "./controller";
+import styles from "./chart.module.css";
+import { Match } from "@/model/match";
 
-const LoginForm: React.FC = () => {
-    const router = useRouter();
-    const [gen, setGen] = useState([] as Pokemon[]);
-    useEffect(() => {
-        (async () => {
-            const johto = (
-                await axios.get(
-                    "https://pokeapi.co/api/v2/pokemon?limit=151&offset=0"
-                )
-            ).data;
-            let pokemons: Pokemon[] = [];
-            await johto.results.forEach(
-                (element: { name: string; url: string }) => {
-                    axios.get(element.url).then((res) => {
-                        console.log(res.data);
-
-                        pokemons.push(res.data);
-                    });
-                }
-            );
-
-            await Promise.all(
-                johto.results.map(
-                    async (element: { name: string; url: string }) => {
-                        axios.get(element.url).then((res) => {
-                            pokemons.push(res.data);
-                        });
-                    }
-                )
-            );
-
-            console.log(pokemons);
-
-            setGen(pokemons);
-        })();
-    }, []);
-
-    useEffect(() => {
-        console.log(gen);
-        console.log(gen.length);
-    }, [gen]);
+const Dashboard: React.FC = async () => {
+    const matches: Match[] = await fetchData();
 
     return (
-        <Container component="main" maxWidth="xs">
-            <CssBaseline />
-            <p>insane dashboard</p>
-        </Container>
+        <div className={styles.wrapper}>
+            <Controller matches={matches} />
+        </div>
     );
 };
 
-export default LoginForm;
+export default Dashboard;

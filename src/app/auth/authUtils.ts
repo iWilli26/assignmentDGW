@@ -1,13 +1,9 @@
 import axios from "axios";
-import { loginRedux, logoutRedux } from "@/Redux/features/authSlice";
-import { useDispatch } from "react-redux";
-import { AppDispatch, useAppSelector } from "@/Redux/store";
 
 export const login = async (loginForm: { email: string; password: string }) => {
     const logged = await axios.post("/api/auth/login", {
         body: JSON.stringify(loginForm),
     });
-    console.log(logged.data);
 
     if (logged.data.error) {
         if (logged.data.error.field === "email") {
@@ -55,14 +51,16 @@ export const login = async (loginForm: { email: string; password: string }) => {
 
 export const getUser = async () => {
     try {
-        const { data } = await axios.get("/api/auth/me");
+        const data = await axios.get("http://localhost:3000/api/auth/me", {
+            headers: {},
+        });
         return {
-            user: data.user,
-            error: null,
+            user: data.data.user,
+            error: {},
         };
     } catch (e) {
         return {
-            user: null,
+            user: {},
             error: e,
         };
     }

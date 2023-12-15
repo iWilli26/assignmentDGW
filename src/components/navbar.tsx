@@ -22,24 +22,10 @@ import { AppDispatch, useAppSelector } from "@/Redux/store";
 import { log } from "console";
 import { loginRedux } from "@/Redux/features/authSlice";
 
-const pages = [
-    {
-        name: "Home",
-        link: "/",
-    },
-    {
-        name: "About",
-        link: "/about",
-    },
-    {
-        name: "Contact",
-        link: "/contact",
-    },
-];
-
 const ResponsiveAppBar: React.FC = () => {
     const [username, setUsername] = useState("");
     const [isAuth, setisAuth] = useState(false);
+    const [initials, setInitials] = useState("");
     const router = useRouter();
 
     const [settings, setSettings] = useState([
@@ -48,16 +34,20 @@ const ResponsiveAppBar: React.FC = () => {
     ]);
 
     const userRedux = useAppSelector((state) => state.authReducer.user);
-    const dispatch = useDispatch<AppDispatch>();
 
+    const dispatch = useDispatch<AppDispatch>();
     useEffect(() => {
         (async () => {
             try {
                 const { user } = await getUser();
+
                 if (user) {
                     setUsername(user.username);
                     setisAuth(true);
                     dispatch(loginRedux(user));
+                    setInitials(
+                        user.firstName.charAt(0) + user.lastName.charAt(0)
+                    );
                 } else {
                     setisAuth(false);
                 }
@@ -65,15 +55,25 @@ const ResponsiveAppBar: React.FC = () => {
                 console.log(error);
             }
         })();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [router]);
-
+    const [pages, setPages] = useState([
+        {
+            name: "Home",
+            link: "/",
+        },
+    ]);
     useEffect(() => {
-        console.log(isAuth);
-
         if (!isAuth) {
             setSettings([
                 { name: "Login", link: "/auth/login" },
                 { name: "Register", link: "/auth/register" },
+            ]);
+            setPages([
+                {
+                    name: "Home",
+                    link: "/",
+                },
             ]);
         } else {
             setSettings([
@@ -81,7 +81,18 @@ const ResponsiveAppBar: React.FC = () => {
                 { name: "Dashboard", link: "/dashboard" },
                 { name: "Logout", link: "/auth/logout" },
             ]);
+            setPages([
+                {
+                    name: "Home",
+                    link: "/",
+                },
+                {
+                    name: "Dashboard",
+                    link: "/dashboard",
+                },
+            ]);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userRedux]);
 
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
@@ -106,6 +117,13 @@ const ResponsiveAppBar: React.FC = () => {
         setAnchorElUser(null);
     };
 
+    function randomColor() {
+        let hex = Math.floor(Math.random() * 0xffffff);
+        let color = "#" + hex.toString(16);
+
+        return color;
+    }
+
     return (
         <AppBar position="static">
             <Container maxWidth="xl">
@@ -113,7 +131,6 @@ const ResponsiveAppBar: React.FC = () => {
                     <AdbIcon
                         sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
                     />
-                    {userRedux?.username}
                     <Typography
                         variant="h6"
                         noWrap
@@ -230,7 +247,24 @@ const ResponsiveAppBar: React.FC = () => {
                                 onClick={handleOpenUserMenu}
                                 sx={{ p: 0 }}
                             >
-                                <Avatar alt={username} />
+                                {isAuth && (
+                                    <Avatar
+                                        style={{
+                                            backgroundColor: randomColor(),
+                                            fontSize: 15,
+                                        }}
+                                    >
+                                        {initials}
+                                    </Avatar>
+                                )}
+                                {!isAuth && (
+                                    <Avatar
+                                        style={{
+                                            backgroundColor: randomColor(),
+                                            fontSize: 15,
+                                        }}
+                                    ></Avatar>
+                                )}
                             </IconButton>
                         </Tooltip>
                         <Menu

@@ -9,7 +9,6 @@ import { logoutRedux } from "@/Redux/features/authSlice";
 const LoginForm: React.FC = () => {
     const router = useRouter();
     const dispatch = useDispatch<AppDispatch>();
-    const user = useAppSelector((state) => state.authReducer.user);
     useEffect(() => {
         (async () => {
             dispatch(logoutRedux());
@@ -17,7 +16,7 @@ const LoginForm: React.FC = () => {
             router.refresh();
             router.push("/auth/login");
         })();
-    }, []);
+    }, [dispatch, router]);
 
     return <Container component="main" maxWidth="xs"></Container>;
 };

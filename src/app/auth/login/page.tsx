@@ -54,7 +54,6 @@ const LoginForm: React.FC = () => {
         password: string;
     }): Promise<void> => {
         const res = await login(data);
-        console.log(res);
 
         if (res?.email.error) {
             setError("email", {
@@ -77,7 +76,6 @@ const LoginForm: React.FC = () => {
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
-            <h1>Username : {userRedux?.username}</h1>
             <Box
                 sx={{
                     marginTop: 8,
@@ -142,7 +140,7 @@ const LoginForm: React.FC = () => {
                     <Grid container justifyContent="flex-end">
                         <Grid item>
                             <Link href="/auth/register" variant="body2">
-                                Don't have an account yet ? Sign up
+                                Don&apos;t have an account yet ? Sign up
                             </Link>
                         </Grid>
                     </Grid>
